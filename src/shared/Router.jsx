@@ -2,8 +2,9 @@ import { BrowserRouter, Route, Routes } from "react-router-dom";
 import Home from "../page/Home";
 import Login from "../page/Login";
 import Singup from "../page/Singup";
-import MyPage from "../page/myPage";
-import RestaurantsList from "../page/restaurantsList";
+import MyPage from "../page/MyPage";
+import RestaurantsList from "../page/RestaurantsList";
+
 function Router() {
     return (
         <BrowserRouter>
