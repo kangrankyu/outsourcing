@@ -1,6 +1,6 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 
-function App() {
+function Router() {
     return (
         <BrowserRouter>
             <Routes>
@@ -14,4 +14,4 @@ function App() {
     );
 }
 
-export default App;
+export default Router;
