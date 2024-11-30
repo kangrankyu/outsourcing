@@ -2,7 +2,7 @@ import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 
 const Navbar = styled.nav`
-  background-color: #f7fafc;
+  background-color: #FFFFFF;
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
   position: fixed;
   top: 0;
