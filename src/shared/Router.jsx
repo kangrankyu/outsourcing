@@ -4,12 +4,15 @@ import Login from "../page/Login";
 import MyPage from "../page/MyPage";
 import RestaurantsList from "../page/RestaurantsList";
 import Signup from "../page/Signup";
+import Layout from '../components/layout/Layout';
 
 function Router() {
     return (
         <BrowserRouter>
             <Routes>
-                <Route path="/" element={<Home />} />
+                <Route element={<Layout />}>
+                    <Route path="/" element={<Home />} />
+                </Route>
                 <Route path="/login" element={<Login />} />
                 <Route path="/signup" element={<Signup />} />
                 <Route path="/mypage" element={<MyPage />} />
@@ -18,5 +21,4 @@ function Router() {
         </BrowserRouter>
     );
 }
-
 export default Router;
