@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { useState } from 'react';
-import { Wrapper, InputGroup, Button, FileUploadLabel, InputWrapper, BoxInputStyle, FileUploadContent, FormWrapper, ImgInputStyle, ReasonInputGroup } from '../style/CreatePostStyle';
+import { Wrapper, InputGroup, Button, FileUploadLabel, InputWrapper, BoxInputStyle, FileUploadContent, FormWrapper, ImgInputStyle, ReasonInputGroup } from '../styles/CreatePostStyle';
 import supabase from '../utils/supabaseClient';
 import { v4 as uuid } from 'uuid';
 
@@ -17,22 +17,21 @@ const CreatePost = () => {
     const [userId, setUserId] = useState('');
     const [review, setReview] = useState([]);
 
-    const mockAuthUser = { id: '1a810b90-490f-4384-b8e1-26715b5017b9' };
-
     // 로그인한 사람 데이터 찾기
-    // useEffect(() => {
-    //     const fetchData = async () => {
-    //         const { data: userData, error: userError } = await supabase.auth.getUser();
-    //         if (userError) {
-    //             console.error("Error:", userError);
-    //             return;
-    //         }
-    //         if (userData.user) {
-    //             setUserId(userData.user.id);
-    //         }
-    //     };
-    //     fetchData();
-    // }, []);
+    useEffect(() => {
+        const fetchData = async () => {
+            const { data: userData, error: userError } = await supabase.auth.getUser();
+            console.log({ userData });
+            if (userError) {
+                console.error("Error:", userError);
+                return;
+            }
+            if (userData.user) {
+                setUserId(userData.user.id);
+            }
+        };
+        fetchData();
+    }, []);
 
     // 이미지파일 업로드 시 임시 url
     const handleFileChange = (e) => {
@@ -68,7 +67,7 @@ const CreatePost = () => {
             address: address,
             rating: parseInt(rating),
             content: content,
-            user_id: mockAuthUser.id,
+            user_id: userId,
             img_url: urlData.publicUrl,
             // latitude: latitude,
             // longitude: longitude,
@@ -76,7 +75,7 @@ const CreatePost = () => {
         if (postError) {
             console.error("Error", postError);
         }
-        setReview([...review, ...postData]);
+        setReview([...review, postData]);
         setName('');
         setAddress('');
         setRating('');
