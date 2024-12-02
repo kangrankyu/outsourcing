@@ -2,7 +2,7 @@ import React from 'react'
 import AuthFrom from '../components/AuthFrom.JSX';
 import { signUpNewUser, tablenickname } from '../auth/authapi';
 import { useNavigate } from 'react-router-dom';
-
+import { LoginDiv2 } from './Login';
 
 
 const Signup = () => {
@@ -29,8 +29,10 @@ const Signup = () => {
 
     }
     return (
-        <><div>Signup</div>
+        <>  <div style={{ width: "100%", height: "100%" }}>
             <AuthFrom onSubmit={SignupSubmit} mode="signup" />
+        </div>
+
         </>
     )
 }
