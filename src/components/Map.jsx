@@ -1,7 +1,6 @@
 import React from 'react';
 import { useEffect } from 'react';
 const { kakao } = window;
-import React from 'react';
 
 export default function Map() {
   useEffect(() => {
