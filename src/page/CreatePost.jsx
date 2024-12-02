@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { Wrapper, InputGroup, Button, FileUploadLabel, InputWrapper, BoxInputStyle, FileUploadContent, FormWrapper, ImgInputStyle, ReasonInputGroup, CenterWrapper } from '../styles/CreatePostStyle';
 import supabase from '../utils/supabaseClient';
 import { v4 as uuid } from 'uuid';
-import PlaceSearch from '../components/PlaceSearch';
+// import PlaceSearch from '../components/PlaceSearch';
 
 
 const CreatePost = () => {
