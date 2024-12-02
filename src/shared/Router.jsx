@@ -3,6 +3,7 @@ import Home from "../page/Home";
 import Login from "../page/Login";
 import MyPage from "../page/MyPage";
 import RestaurantsList from "../page/RestaurantsList";
+import CreatePost from "../page/CreatePost";
 import Signup from "../page/Signup";
 import Layout from '../components/layout/Layout';
 
@@ -17,6 +18,7 @@ function Router() {
                 <Route path="/signup" element={<Signup />} />
                 <Route path="/mypage" element={<MyPage />} />
                 <Route path="/restaurants/:id" element={<RestaurantsList />} />
+                <Route path="/createpost" element={<CreatePost />} />
             </Routes>
         </BrowserRouter>
     )
