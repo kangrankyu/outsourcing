@@ -4,6 +4,7 @@ import Login from "../page/Login";
 import Singup from "../page/Singup";
 import MyPage from "../page/MyPage";
 import RestaurantsList from "../page/RestaurantsList";
+import CreatePost from "../page/CreatePost";
 
 function Router() {
     return (
@@ -14,6 +15,7 @@ function Router() {
                 <Route path="/signup" element={<Singup />} />
                 <Route path="/mypage" element={<MyPage />} />
                 <Route path="/restaurants/:id" element={<RestaurantsList />} />
+                <Route path="/createpost" element={<CreatePost />} />
             </Routes>
         </BrowserRouter>
     );
