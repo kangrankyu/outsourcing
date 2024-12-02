@@ -19,6 +19,6 @@ function Router() {
                 <Route path="/restaurants/:id" element={<RestaurantsList />} />
             </Routes>
         </BrowserRouter>
-    );
+    )
 }
 export default Router;
