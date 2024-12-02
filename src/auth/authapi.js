@@ -2,7 +2,8 @@ export const signUpNewUser = async (e) => {
   e.preventDefault();
   const { data, error } = await supabase.auth.signUp({
     email,
-    password
+    password,
+    nickname
   });
   console.log('signup: ', { data, error });
 };

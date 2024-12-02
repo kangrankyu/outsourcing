@@ -1,7 +1,7 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import Home from "../page/Home";
 import Login from "../page/Login";
-import Singup from "../page/Singup";
+import Signup from "../page/Signup";
 import MyPage from "../page/MyPage";
 import RestaurantsList from "../page/RestaurantsList";
 
@@ -11,7 +11,7 @@ function Router() {
             <Routes>
                 <Route path="/" element={<Home />} />
                 <Route path="/login" element={<Login />} />
-                <Route path="/signup" element={<Singup />} />
+                <Route path="/signup" element={<Signup />} />
                 <Route path="/mypage" element={<MyPage />} />
                 <Route path="/restaurants/:id" element={<RestaurantsList />} />
             </Routes>
