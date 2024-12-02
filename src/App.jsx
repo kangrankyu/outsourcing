@@ -1,11 +1,17 @@
-import { useState } from 'react'
-import supabase from './utils/supabaseClient'
-import Router from './shared/Router'
-console.log(supabase)
+import { useState } from 'react';
+import supabase from './utils/supabaseClient';
+import Router from './shared/Router';
+import GlobalStyle from './styles/Globalstyle';
+console.log(supabase);
 function App() {
-  const [count, setCount] = useState(0)
+  const [count, setCount] = useState(0);
 
-  return (<Router />)
+  return (
+    <>
+      <GlobalStyle />
+      <Router />
+    </>
+  );
 }
 
-export default App
+export default App;
