@@ -21,8 +21,8 @@ const Signup = () => {
 
     }
     return (
-        <><div>Singup</div>
-            <AuthFrom onSubmit={SignupSubmit} />
+        <><div>회원가입</div>
+            <AuthFrom onSubmit={SignupSubmit} mode="signup"/>
         </>
     )
 }
