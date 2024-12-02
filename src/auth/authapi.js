@@ -21,11 +21,14 @@ export const signOutUser = async () => {
   console.log('signout: ', { data, error });
   setUser(null);
 };
-export const tablenickname = async (formdata, user) => {
+export const tablenickname = async (formdata, userId) => {
   const { nickname } = formdata;
-  const userid = user.id;
-
-  const { data, error } = await supabase.from('users').insert([{ nickname }]).select();
+  console.log(userId);
+  console.log(nickname);
+  const { data, error } = await supabase
+    .from('users')
+    .insert([{ nickname, id: userId }])
+    .select();
   console.log(error);
   return data;
 };

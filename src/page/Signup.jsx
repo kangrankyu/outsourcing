@@ -12,11 +12,12 @@ const Signup = () => {
         try {
             const data = await signUpNewUser(formdata)
 
-            const user = data;
+
 
             alert('회원가입이 완료되었습니다.');
-            console.log(user)
-            await tablenickname(formdata, user)
+
+
+            await tablenickname(formdata, data.user.id)
 
             navigate('/login')
 
