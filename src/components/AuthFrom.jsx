@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 
-const AuthFrom = ({ onSubmit }) => {
+const AuthFrom = ({ onSubmit, mode }) => {
     const [formdata, setformdata] = useState({
         email: "",
         password: "",
@@ -24,8 +24,8 @@ const AuthFrom = ({ onSubmit }) => {
             <form onSubmit={handleSubmit}>
                 <input type="text" value={formdata.email} name='email' placeholder='이메일을 입력하세요 ' onChange={handleChange} />
                 <input type="password" value={formdata.password} name='password' placeholder='비밀번호을 입력하세요 ' onChange={handleChange} />
-                <input type="text" value={formdata.nickname} name='nickname' placeholder='닉네임을 입력하세요 ' onChange={handleChange} />
-                <button type='submit'>회원가입</button>
+                {mode === "signup" && (<input type="text" value={formdata.nickname} name='nickname' placeholder='닉네임을 입력하세요 ' onChange={handleChange} />)}
+                <button type='submit'>{mode === 'login' ? '로그인' : '회원가입'}</button>
             </form>
         </>
 
