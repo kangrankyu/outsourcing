@@ -1,9 +1,9 @@
-export const signUpNewUser = async (e) => {
-  e.preventDefault();
+import supabase from '../utils/supabaseClient';
+export const signUpNewUser = async (formdata) => {
+  const { email, password, nickname } = formdata;
   const { data, error } = await supabase.auth.signUp({
     email,
-    password,
-    nickname
+    password
   });
   console.log('signup: ', { data, error });
 };
@@ -18,6 +18,6 @@ export const signInUser = async () => {
 
 export const signOutUser = async () => {
   const { data, error } = await supabase.auth.signOut();
-  console.log('signout: ', { data, error }); // data는 딱히 필요없을 듯
+  console.log('signout: ', { data, error });
   setUser(null);
 };
