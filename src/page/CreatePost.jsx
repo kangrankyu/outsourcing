@@ -127,7 +127,9 @@ const CreatePost = () => {
                                     onChange={(e) => setAddress(e.target.value)}
                                     // readOnly 읽기전용
                                     required />
-                                {/* <PlaceSearch /> */}
+                                {/* <button type="button" onClick={() => setIsModalOpen(true)}>
+                                    주소 검색
+                                </button> */}
                             </InputGroup>
                             <InputGroup>
                                 <label>평점</label>
