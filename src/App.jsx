@@ -1,4 +1,4 @@
-import supabase from './utils/supabaseClient';
+// import supabase from './utils/supabaseClient';
 import Router from './shared/Router';
 import GlobalStyle from './styles/Globalstyle';
 
