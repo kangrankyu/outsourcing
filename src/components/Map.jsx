@@ -1,6 +1,7 @@
 import { useEffect, useRef } from 'react';
 import useFetchRestaurants from './useFetchRestaurants';
 
+
 const Map = () => {
   const mapContainer = useRef(null);
   const restaurants = useFetchRestaurants();
