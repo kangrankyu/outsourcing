@@ -1,8 +1,15 @@
 import supabase from './utils/supabaseClient';
-import  Router  from '../src/shared/Router';
-console.log(supabase);
+import Router from './shared/Router';
+import GlobalStyle from './styles/Globalstyle';
+
 function App() {
-  return <Router />;
+
+  return (
+    <>
+      <GlobalStyle />
+      <Router />
+    </>
+  );
 }
 
 export default App;
