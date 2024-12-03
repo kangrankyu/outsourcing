@@ -1,10 +1,10 @@
-import  { useEffect } from 'react';
+import { useEffect } from 'react';
 import { useState } from 'react';
 import { Wrapper, InputGroup, Button, FileUploadLabel, InputWrapper, BoxInputStyle, FileUploadContent, FormWrapper, ImgInputStyle, ReasonInputGroup, CenterWrapper } from '../styles/CreatePostStyle';
 import supabase from '../utils/supabaseClient';
 import { v4 as uuid } from 'uuid';
-// import PlaceSearch from '../components/PlaceSearch';
-
+import PlaceSearch from '../components/PlaceSearch';
+import Modal from '../components/SearchModal';
 
 const CreatePost = () => {
     const [name, setName] = useState('');
@@ -13,16 +13,14 @@ const CreatePost = () => {
     const [content, setContent] = useState('');
     const [imgFile, setImgFile] = useState(null);
     const [imgUrl, setImgUrl] = useState(null);
-    // const [latitude, setLatitude] = useState('');
-    // const [longitude, setLongitude] = useState('');
     const [userId, setUserId] = useState('');
     const [review, setReview] = useState([]);
+    const [isModalOpen, setIsModalOpen] = useState(false);
 
     // 로그인한 사람 데이터 찾기
     useEffect(() => {
         const fetchData = async () => {
             const { data: userData, error: userError } = await supabase.auth.getUser();
-            console.log({ userData });
             if (userError) {
                 console.error("Error:", userError);
                 return;
@@ -52,6 +50,12 @@ const CreatePost = () => {
         e.preventDefault();
         const newFileName = uuid();
 
+        // 파일이 없을 경우 alert를 띄우고 함수 종료
+        if (!imgFile) {
+            alert("사진을 올려주세요!");
+            return;
+        }
+
         // supabase storage에 이미지 url 추가
         const { data: reviewImgData, error: reviewImgError } = await supabase.storage.from("reviewImg").upload(`reviewImg/${newFileName}`, imgFile);
         if (reviewImgError) {
@@ -70,8 +74,6 @@ const CreatePost = () => {
             content: content,
             user_id: userId,
             img_url: urlData.publicUrl,
-            // latitude: latitude,
-            // longitude: longitude,
         }).select();
         if (postError) {
             console.error("Error", postError);
@@ -89,6 +91,12 @@ const CreatePost = () => {
         setImgFile(null);
     }
 
+    // 모달에서 선택된 장소의 주소를 설정하는 함수
+    const handleAddressSelect = (selectedAddress) => {
+        setAddress(selectedAddress);
+        setIsModalOpen(false);
+    };
+
     return (
         <CenterWrapper>
             <Wrapper>
@@ -104,7 +112,7 @@ const CreatePost = () => {
                                     onChange={handleFileChange}
                                 />
                                 {imgFile && (
-                                    <button type='button' onClick={removeBtn} className="remove-button">X</button>
+                                    <button type="button" onClick={removeBtn} className="remove-button">X</button>
                                 )}
                             </FileUploadLabel>
                             {!imgFile ? (<FileUploadContent>가게 사진 or 음식 사진을 올려주세요!</FileUploadContent>) : ("")}
@@ -116,8 +124,17 @@ const CreatePost = () => {
                             </InputGroup>
                             <InputGroup>
                                 <label>주소</label>
-                                <input type='text' value={address} placeholder='주소를 입력해주세요' onChange={(e) => setAddress(e.target.value)} required />
-                                {/* <PlaceSearch /> */}
+                                <input type='text'
+                                    value={address}
+                                    placeholder='주소를 검색해주세요'
+                                    readOnly
+                                    onClick={() => setIsModalOpen(true)}
+                                    required />
+                                {isModalOpen && (
+                                    <Modal onClose={() => setIsModalOpen(false)}>
+                                        <PlaceSearch onSelectAddress={handleAddressSelect} />
+                                    </Modal>
+                                )}
                             </InputGroup>
                             <InputGroup>
                                 <label>평점</label>
