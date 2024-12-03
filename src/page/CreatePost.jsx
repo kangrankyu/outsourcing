@@ -22,7 +22,6 @@ const CreatePost = () => {
     useEffect(() => {
         const fetchData = async () => {
             const { data: userData, error: userError } = await supabase.auth.getUser();
-            console.log({ userData });
             if (userError) {
                 console.error("Error:", userError);
                 return;
@@ -51,6 +50,12 @@ const CreatePost = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         const newFileName = uuid();
+
+        // 파일이 없을 경우 alert를 띄우고 함수 종료
+        if (!imgFile) {
+            alert("사진을 올려주세요!");
+            return;
+        }
 
         // supabase storage에 이미지 url 추가
         const { data: reviewImgData, error: reviewImgError } = await supabase.storage.from("reviewImg").upload(`reviewImg/${newFileName}`, imgFile);
@@ -104,7 +109,7 @@ const CreatePost = () => {
                                     onChange={handleFileChange}
                                 />
                                 {imgFile && (
-                                    <button type='button' onClick={removeBtn} className="remove-button">X</button>
+                                    <button type="button" onClick={removeBtn} className="remove-button">X</button>
                                 )}
                             </FileUploadLabel>
                             {!imgFile ? (<FileUploadContent>가게 사진 or 음식 사진을 올려주세요!</FileUploadContent>) : ("")}
@@ -116,7 +121,12 @@ const CreatePost = () => {
                             </InputGroup>
                             <InputGroup>
                                 <label>주소</label>
-                                <input type='text' value={address} placeholder='주소를 입력해주세요' onChange={(e) => setAddress(e.target.value)} required />
+                                <input type='text'
+                                    value={address}
+                                    placeholder='주소를 입력해주세요'
+                                    onChange={(e) => setAddress(e.target.value)}
+                                    // readOnly 읽기전용
+                                    required />
                                 {/* <PlaceSearch /> */}
                             </InputGroup>
                             <InputGroup>
