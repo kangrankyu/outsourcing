@@ -1,11 +1,8 @@
-import { useState } from 'react'
-import supabase from './utils/supabaseClient'
-import { Router } from 'react-router-dom'
-console.log(supabase)
+import supabase from './utils/supabaseClient';
+import  Router  from '../src/shared/Router';
+console.log(supabase);
 function App() {
-  const [count, setCount] = useState(0)
-
-  return (<Router />)
+  return <Router />;
 }
 
-export default App
+export default App;
