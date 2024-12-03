@@ -1,12 +1,12 @@
-import { useCallback, useEffect, useRef } from 'react';
+import { useEffect, useRef } from 'react';
 import useFetchRestaurants from './useFetchRestaurants';
 
-const MapComponent = () => {
+const Map = () => {
   const mapContainer = useRef(null);
   const restaurants = useFetchRestaurants();
 
   // createMarker: 마커, 인포윈도우를 생성하는 함수
-  const createMarker = useCallback((map, restaurant) => {
+  const createMarker = (map, restaurant) => {
     const { kakao } = window;
 
     // 좌표에 마커를 생성한다.
@@ -47,11 +47,12 @@ const MapComponent = () => {
     kakao.maps.event.addListener(marker, 'click', function () {
       overlay.setMap(map);
     });
-  }, []);
+  };
 
-  // initializeMap: 지도와 마커를 설정하는 함수(지도 초기화)
-  const initializeMap = useCallback(
-    (restaurants) => {
+  // 카카오맵 api에서 마커를 표시한다.
+  useEffect(() => {
+    // initializeMap: 지도와 마커를 설정하는 함수(지도 초기화)
+    const initializeMap = (restaurants) => {
       const { kakao } = window;
       const mapOption = {
         center: new kakao.maps.LatLng(37.5665, 126.978), //지도의 중심좌표
@@ -65,16 +66,12 @@ const MapComponent = () => {
       restaurants.forEach((restaurant) => {
         createMarker(map, restaurant, infowindow);
       });
-    },
-    [createMarker]
-  );
+    };
 
-  // 카카오맵 api에서 마커를 표시한다.
-  useEffect(() => {
     if (restaurants.length > 0) {
       initializeMap(restaurants);
     }
-  }, [restaurants, initializeMap]);
+  }, [restaurants]);
 
   return (
     <>
@@ -89,4 +86,9 @@ const MapComponent = () => {
   );
 };
 
-export default MapComponent;
+export default Map;
+
+// TODO
+// 1. 커스텀 오버레이 닫기 기능 구현하기
+// 2. 음식점 이름으로 검색하는 기능 구현하기 및 목록 출력
+// 3. ui 개선
