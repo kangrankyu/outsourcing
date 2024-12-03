@@ -24,31 +24,28 @@ const NavLinks = styled.div`
 const Logo = styled.div`
   font-size: 1.5rem;
   font-weight: bold;
-  color: #2b6cb0; /* text-blue-600 */
+  color: #3949ab;
 `;
 
 const NavLink = styled(Link)`
   text-decoration: none;
-  color: #4a5568; /* text-gray-700 */
+  color: #4a5568;
   font-weight: 600;
   font-size: 1rem;
   transition: color 0.2s ease;
 
   &:hover {
-    color: #2d3748; /* text-gray-800 */
+    color: #2d3748;
   }
 `;
 
 const Header = () => {
   return (
     <Navbar>
-      <Logo>MyWebsite</Logo>
+      <Logo>YEE조 팀 프로젝트</Logo>
       <NavLinks>
         <NavLink to="/">
           홈
-        </NavLink>
-        <NavLink to="/community">
-          커뮤니티
         </NavLink>
         <NavLink to="/board">
           게시판
