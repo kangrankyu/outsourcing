@@ -1,10 +1,10 @@
-import  { useEffect } from 'react';
+import { useEffect } from 'react';
 import { useState } from 'react';
 import { Wrapper, InputGroup, Button, FileUploadLabel, InputWrapper, BoxInputStyle, FileUploadContent, FormWrapper, ImgInputStyle, ReasonInputGroup, CenterWrapper } from '../styles/CreatePostStyle';
 import supabase from '../utils/supabaseClient';
 import { v4 as uuid } from 'uuid';
-// import PlaceSearch from '../components/PlaceSearch';
-
+import PlaceSearch from '../components/PlaceSearch';
+import Modal from '../components/SearchModal';
 
 const CreatePost = () => {
     const [name, setName] = useState('');
@@ -13,10 +13,9 @@ const CreatePost = () => {
     const [content, setContent] = useState('');
     const [imgFile, setImgFile] = useState(null);
     const [imgUrl, setImgUrl] = useState(null);
-    // const [latitude, setLatitude] = useState('');
-    // const [longitude, setLongitude] = useState('');
     const [userId, setUserId] = useState('');
     const [review, setReview] = useState([]);
+    const [isModalOpen, setIsModalOpen] = useState(false);
 
     // 로그인한 사람 데이터 찾기
     useEffect(() => {
@@ -75,8 +74,6 @@ const CreatePost = () => {
             content: content,
             user_id: userId,
             img_url: urlData.publicUrl,
-            // latitude: latitude,
-            // longitude: longitude,
         }).select();
         if (postError) {
             console.error("Error", postError);
@@ -93,6 +90,12 @@ const CreatePost = () => {
         setImgUrl(null);
         setImgFile(null);
     }
+
+    // 모달에서 선택된 장소의 주소를 설정하는 함수
+    const handleAddressSelect = (selectedAddress) => {
+        setAddress(selectedAddress);
+        setIsModalOpen(false);
+    };
 
     return (
         <CenterWrapper>
@@ -123,13 +126,15 @@ const CreatePost = () => {
                                 <label>주소</label>
                                 <input type='text'
                                     value={address}
-                                    placeholder='주소를 입력해주세요'
-                                    onChange={(e) => setAddress(e.target.value)}
-                                    // readOnly 읽기전용
+                                    placeholder='주소를 검색해주세요'
+                                    readOnly
+                                    onClick={() => setIsModalOpen(true)}
                                     required />
-                                {/* <button type="button" onClick={() => setIsModalOpen(true)}>
-                                    주소 검색
-                                </button> */}
+                                {isModalOpen && (
+                                    <Modal onClose={() => setIsModalOpen(false)}>
+                                        <PlaceSearch onSelectAddress={handleAddressSelect} />
+                                    </Modal>
+                                )}
                             </InputGroup>
                             <InputGroup>
                                 <label>평점</label>
