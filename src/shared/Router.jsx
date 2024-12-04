@@ -8,6 +8,7 @@ import Signup from '../page/Signup';
 import Layout from '../components/layout/Layout';
 
 function Router() {
+
   return (
     <BrowserRouter>
       <Routes>
@@ -22,5 +23,6 @@ function Router() {
       </Routes>
     </BrowserRouter>
   );
+
 }
 export default Router;
