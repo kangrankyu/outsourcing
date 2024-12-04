@@ -11,7 +11,7 @@ const HeaderHeight = '4rem';
 const Container = styled.div`
   display: flex;
   width: 100%;
-  height: calc(100vh - ${HeaderHeight}); // 뷰포트 높이에서 헤더 높이를 뺀 값으로 설정
+  height: calc(100vh - ${HeaderHeight});
   margin-top: ${HeaderHeight};
   box-sizing: border-box;
 `;
