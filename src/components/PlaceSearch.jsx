@@ -1,11 +1,18 @@
 import { useState } from "react";
 import { InputStyle, Pagination, PlaceItem, PlaceList, SearchButton, Wrapper } from "../styles/PlaceSearchStyle";
+
 const { kakao } = window;
 
 // 한 페이지에 표시할 항목 수
 const ITEMS_PER_PAGE = 5;
 
-function PlaceSearch({ onSelectAddress }) {
+function PlaceSearch({
+    setRestaurantName,
+    setLatitude,
+    setLongitude,
+    setRestaurantAddress,
+    setPhone,
+    onSelectAddress }) {
     const [keyword, setKeyword] = useState('');
     const [places, setPlaces] = useState([]);
     const [currentPage, setCurrentPage] = useState(1);
@@ -18,7 +25,7 @@ function PlaceSearch({ onSelectAddress }) {
     const currentPlace = places.slice(startIndex, startIndex + ITEMS_PER_PAGE)
 
     // 카카오 장소 검색 객체 생성
-    const ps = new kakao.maps.services.Places(); 
+    const ps = new kakao.maps.services.Places();
 
     const handleSearch = () => {
         if (!keyword.trim()) {
@@ -45,9 +52,15 @@ function PlaceSearch({ onSelectAddress }) {
     };
 
     // 장소 선택 시 호출되는 함수
-    const handlePlaceSelect = (place) => {
+    const handlePlaceSelect = async(place) => {
         const address = place.road_address_name || place.address_name;
-        console.log({ place });
+
+        setRestaurantName(place.place_name);
+        setLatitude(place.y);
+        setLongitude(place.x);
+        setRestaurantAddress(place.road_address_name || place.address_name);
+        setPhone(place.phone || null);
+
         onSelectAddress(address);
     };
 
@@ -75,7 +88,7 @@ function PlaceSearch({ onSelectAddress }) {
                         onClick={() => setCurrentPage(index + 1)}
                         // 현재 페이지와 버튼의 페이지 번호가 같으면 비활성화
                         disabled={currentPage === index + 1}>
-                        {index+1}
+                        {index + 1}
                     </button>
                 ))}
             </Pagination>
