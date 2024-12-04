@@ -1,3 +1,4 @@
+import { Outlet } from 'react-router-dom';
 import Home from '../../page/Home';
 import Header from './Header';
 
@@ -5,9 +6,10 @@ const Layout = () => {
   return (
     <>
       <Header />
-      <main>
+      <Outlet />
+      {/* <main>
         <Home />
-      </main>
+      </main> */}
     </>
   );
 };

@@ -1,10 +1,19 @@
-import Map from '../components/Map';
+import styled from 'styled-components';
+import RestaurantMap from '../components/RestaurantMap';
+
+// styled-components
+const Content = styled.div`
+  display: flex;
+  flex: 1;
+`;
 
 const Home = () => {
   return (
-    <div>
-      <Map />
-    </div>
+    <>
+      <Content>
+        <RestaurantMap />
+      </Content>
+    </>
   );
 };
 
