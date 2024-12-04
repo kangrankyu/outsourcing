@@ -8,11 +8,16 @@ import Signup from '../page/Signup';
 import Layout from '../components/layout/Layout';
 
 function Router() {
+
+
+
+
   return (
     <BrowserRouter>
       <Routes>
         <Route element={<Layout />}>
           <Route path="/" element={<Home />} />
+
         </Route>
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
@@ -23,5 +28,9 @@ function Router() {
       </Routes>
     </BrowserRouter>
   );
+
+         
+
+
 }
 export default Router;
