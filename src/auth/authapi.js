@@ -17,13 +17,14 @@ export const signInUser = async ({ email, password }) => {
     email,
     password
   });
-
+   localStorage.setItem('user', JSON.stringify(data));
   if (error) {
     console.error('로그인 실패:', error.message);
     return { error };
   }
 
   console.log('로그인 성공:', data);
+  
   return { data };
 };
 
@@ -32,6 +33,7 @@ export const signOutUser = async () => {
   console.log('signout: ', { data, error });
   setUser(null);
 };
+
 export const tablenickname = async (formdata, userId) => {
   const { nickname } = formdata;
   console.log(userId);
