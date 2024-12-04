@@ -112,16 +112,41 @@ const ModalContent = styled.div`
     border-radius: 4px;
     margin-bottom: 20px;
   }
+
+  h3 {
+    font-size: 20px;
+    font-weight: bold;
+    margin-bottom: 12px;
+  }
+
+  p {
+    margin: 8px 0;
+    font-size: 14px;
+    color: #555;
+  }
+
+  button {
+    margin-top: 20px;
+    padding: 10px 20px;
+    border-radius: 8px;
+    cursor: pointer;
+  }
+
+  .button-group {
+    display: flex;
+    justify-content: space-between;
+  }
 `;
 
-const FieldWrapper = styled.div`
+const Label = styled.label`
   display: flex;
   align-items: center;
   margin-bottom: 16px;
 
-  label {
-    width: 80px;
+  span {
+    width: 100px;
     font-weight: bold;
+    margin-right: 16px;
   }
 `;
 
@@ -129,7 +154,7 @@ const StyledInput = styled.input`
   flex: 1;
   border: none;
   border-bottom: 1px solid #ccc;
-  font-size: 14px;
+  font-size: 16px;
   padding: 4px 0;
   outline: none;
 
@@ -139,66 +164,39 @@ const StyledInput = styled.input`
 `;
 
 const StyledTextarea = styled.textarea`
-  width: 100%;
+  flex: 1;
   height: 100px;
-  padding: 8px;
-  font-size: 14px;
   border: 1px solid #ccc;
   border-radius: 4px;
-  outline: none;
-`;
-
-const SelectInput = styled.select`
-  width: 100%;
-  padding: 8px;
   font-size: 14px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
+  padding: 8px;
   outline: none;
-`;
 
-const ButtonGroup = styled.div`
-  display: flex;
-  justify-content: flex-end;
-  gap: 10px;
-  margin-top: 20px;
-`;
-
-const ButtonPrimary = styled.button`
-  background-color: #3949ab;
-  color: white;
-  border: none;
-  padding: 10px 20px;
-  border-radius: 4px;
-  cursor: pointer;
-
-  &:hover {
-    background-color: #2c387e;
+  &:focus {
+    border: 1px solid #3949ab;
   }
 `;
 
-const ButtonSecondary = styled.button`
-  background-color: #f3f3f3;
-  color: black;
+const SelectInput = styled.select`
+  flex: 1;
+  padding: 8px;
+  font-size: 14px;
   border: 1px solid #ccc;
-  padding: 10px 20px;
   border-radius: 4px;
-  cursor: pointer;
 
-  &:hover {
-    background-color: #e0e0e0;
+  &:focus {
+    border: 1px solid #3949ab;
   }
 `;
 
 const MyPage = () => {
   const [selectedReview, setSelectedReview] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [isEdit, setIsEdit] = useState(false);
-  const [editedReview, setEditedReview] = useState({});
+  const [isEditing, setIsEditing] = useState(false);
+  const [editedReview, setEditedReview] = useState(null);
 
   const queryClient = useQueryClient();
 
-  // 닉네임 데이터를 가져오기 위한 useQuery
   const { data: nickname, isLoading: isNicknameLoading } = useQuery({
     queryKey: ['nickname'],
     queryFn: async () => {
@@ -210,7 +208,6 @@ const MyPage = () => {
     }
   });
 
-  // 리뷰 목록 데이터를 가져오기 위한 useQuery
   const { data: reviews, isLoading: isReviewsLoading } = useQuery({
     queryKey: ['reviews'],
     queryFn: async () => {
@@ -225,16 +222,15 @@ const MyPage = () => {
     }
   });
 
-  // 리뷰 수정용
   const updateMutation = useMutation({
     mutationFn: async (updatedReview) => {
       const { error } = await supabase
         .from('reviews')
         .update({
-          name: updatedReview.name,
-          address: updatedReview.address,
+          content: updatedReview.content,
           rating: updatedReview.rating,
-          content: updatedReview.content
+          name: updatedReview.name,
+          address: updatedReview.address
         })
         .eq('id', updatedReview.id);
       if (error) throw new Error(error.message);
@@ -242,11 +238,10 @@ const MyPage = () => {
     onSuccess: () => {
       queryClient.invalidateQueries(['reviews']);
       alert('리뷰가 수정되었습니다.');
-      setIsEdit(false);
+      closeModal();
     }
   });
 
-  // 리뷰 삭제용
   const deleteMutation = useMutation({
     mutationFn: async (reviewId) => {
       const { error } = await supabase.from('reviews').delete().eq('id', reviewId);
@@ -259,39 +254,34 @@ const MyPage = () => {
     }
   });
 
-  //모달 열고 닫기
   const openModal = (review) => {
     setSelectedReview(review);
     setEditedReview({ ...review });
     setIsModalOpen(true);
-    setIsEdit(false);
+    setIsEditing(false);
   };
 
   const closeModal = () => {
     setSelectedReview(null);
-    setEditedReview({});
+    setEditedReview(null);
     setIsModalOpen(false);
-    setIsEdit(false);
+    setIsEditing(false);
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault(); // 폼의 기본 동작 방지
-    if (isEdit) {
-      handleSave(); // 수정 저장 처리
-    } else {
-      deleteMutation.mutate(selectedReview.id); // 삭제 처리
-    }
+  const handleEditToggle = () => {
+    setIsEditing(!isEditing);
   };
 
   const handleSave = () => {
-    updateMutation.mutate(editedReview);
+    if (editedReview) {
+      updateMutation.mutate(editedReview);
+    }
   };
 
   if (isNicknameLoading || isReviewsLoading) {
     return <PageContainer>Loading...</PageContainer>;
   }
 
-  // 컴포넌트 렌더링
   return (
     <PageContainer>
       <NicknameWrapper>
@@ -309,7 +299,7 @@ const MyPage = () => {
             <h3>상호명 : {review.name}</h3>
             <p>주소 : {review.address}</p>
             <p>평점: {review.rating}</p>
-            <p>리뷰: {review.content.length > 40 ? `${review.content.substring(0, 40)}...` : review.content}</p>
+            <p>리뷰: {review.content.length > 30 ? `${review.content.substring(0, 30)}...` : review.content}</p>
           </Card>
         ))}
       </CardContainer>
@@ -322,25 +312,24 @@ const MyPage = () => {
             ) : (
               <div className="placeholder" />
             )}
-
-            {isEdit ? (
-              <form onSubmit={handleSubmit}>
-                <FieldWrapper>
-                  <label>상호명:</label>
+            {isEditing ? (
+              <>
+                <Label>
+                  <span>상호명:</span>
                   <StyledInput
                     value={editedReview.name}
                     onChange={(e) => setEditedReview({ ...editedReview, name: e.target.value })}
                   />
-                </FieldWrapper>
-                <FieldWrapper>
-                  <label>주소:</label>
+                </Label>
+                <Label>
+                  <span>주소:</span>
                   <StyledInput
                     value={editedReview.address}
                     onChange={(e) => setEditedReview({ ...editedReview, address: e.target.value })}
                   />
-                </FieldWrapper>
-                <FieldWrapper>
-                  <label>평점:</label>
+                </Label>
+                <Label>
+                  <span>평점:</span>
                   <SelectInput
                     value={editedReview.rating}
                     onChange={(e) => setEditedReview({ ...editedReview, rating: e.target.value })}
@@ -354,35 +343,40 @@ const MyPage = () => {
                       </option>
                     ))}
                   </SelectInput>
-                </FieldWrapper>
-                <FieldWrapper>
-                  <label>리뷰:</label>
+                </Label>
+                <Label>
+                  <span>리뷰:</span>
                   <StyledTextarea
                     value={editedReview.content}
                     onChange={(e) => setEditedReview({ ...editedReview, content: e.target.value })}
                   />
-                </FieldWrapper>
-                <ButtonGroup>
-                  <ButtonPrimary type="submit">수정 완료</ButtonPrimary>
-                  <ButtonSecondary type="button" onClick={() => setIsEdit(false)}>
-                    취소
-                  </ButtonSecondary>
-                </ButtonGroup>
-              </form>
+                </Label>
+              </>
             ) : (
-              <form onSubmit={handleSubmit}>
+              <>
                 <h3>상호명 : {selectedReview.name}</h3>
                 <p>주소 : {selectedReview.address}</p>
                 <p>평점: {selectedReview.rating}</p>
                 <p>리뷰: {selectedReview.content}</p>
-                <ButtonGroup>
-                  <ButtonSecondary type="button" onClick={() => setIsEdit(true)}>
-                    수정
-                  </ButtonSecondary>
-                  <ButtonPrimary type="submit">삭제</ButtonPrimary>
-                </ButtonGroup>
-              </form>
+              </>
             )}
+            <div className="button-group">
+              <button style={{ backgroundColor: '#f3f3f3', color: 'black' }} onClick={handleEditToggle}>
+                {isEditing ? '취소' : '수정'}
+              </button>
+              {isEditing ? (
+                <button style={{ backgroundColor: '#3949ab', color: 'white' }} onClick={handleSave}>
+                  저장
+                </button>
+              ) : (
+                <button
+                  style={{ backgroundColor: '#3949ab', color: 'white' }}
+                  onClick={() => deleteMutation.mutate(selectedReview.id)}
+                >
+                  삭제
+                </button>
+              )}
+            </div>
           </ModalContent>
         </ModalOverlay>
       )}
