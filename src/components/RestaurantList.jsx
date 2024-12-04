@@ -1,18 +1,9 @@
-import useFetchRestaurants from './useFetchRestaurants';
+import { useState } from 'react';
+import useRestaurantsData from './useRestaurantsData';
 import styled from 'styled-components';
 
-const ListContainer = styled.div`
-  background-color: #ffffff;
-  width: 20%;
-  max-height: 100vh;
-  overflow-y: auto;
-  overflow: hidden;
-`;
-
-const ListHeader = styled.h2`
-  font-size: 1.5rem;
-  margin-bottom: 1rem;
-`;
+// styled-components
+const ListWrapper = styled.div``;
 
 const ListItem = styled.div`
   padding: 1rem;
@@ -24,21 +15,43 @@ const ListItem = styled.div`
   }
 `;
 
-const RestaurantList = () => {
-  const restaurants = useFetchRestaurants();
+const MoreButton = styled.button`
+  margin-top: 10px;
+  padding: 10px 15px;
+  background-color: #ffffff;
+  color: #007bff;
+  border: none;
+  cursor: pointer;
+  &:hover {
+    background-color: #e7f3ff;
+  }
+`;
 
+const RestaurantList = ({ onSelectRestaurant }) => {
+  const { data: restaurants, isLoading, error } = useRestaurantsData();
+  const [ visibleCount, setVisibleCount ] = useState(5);
+
+  if (isLoading) return <div>Loading...</div>;
+  if (error) return <div>Error: {error.message}</div>;
+
+  // 더보기 버튼 클릭 시 표시할 항목 수 + 5
+  const handleMoreClick = () => {
+    setVisibleCount((prevCount) => prevCount + 5);
+  };
   return (
-    <>
-      <ListContainer>
-        <ListHeader>Restaurant List</ListHeader>
-        {restaurants.map((restaurant) => (
-          <ListItem key={restaurant.id}>
+    <ListWrapper>
+      <div>
+        {restaurants.slice(0, visibleCount).map((restaurant) => (
+          <ListItem key={restaurant.id} onClick={() => onSelectRestaurant(restaurant)}>
             <p>{restaurant.name}</p>
             <p>{restaurant.address}</p>
           </ListItem>
         ))}
-      </ListContainer>
-    </>
+      </div>
+      {visibleCount < restaurants.length && (
+        <MoreButton onClick={handleMoreClick}>더 보기</MoreButton>
+      )}
+    </ListWrapper>
   );
 };
 
