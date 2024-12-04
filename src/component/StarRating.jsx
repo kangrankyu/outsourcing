@@ -2,10 +2,15 @@ import { FaRegStar, FaStar } from 'react-icons/fa';
 import styled from 'styled-components';
 
 const StarSection = styled.div`
+  display: flex;
   .star {
     color: blue;
-    font-size: 52px;
+    font-size: 48px;
     cursor: pointer;
+  }
+  &:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
   }
 `;
 
@@ -72,13 +77,3 @@ export default StarRating;
 // };
 
 // export default StarRating;
-
-
-
-
-
-
-
-
-
-
