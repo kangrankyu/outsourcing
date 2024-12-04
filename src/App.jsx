@@ -1,14 +1,15 @@
-// import supabase from './utils/supabaseClient';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import Router from './shared/Router';
 import GlobalStyle from './styles/Globalstyle';
 
-function App() {
+const queryClient = new QueryClient();
 
+function App() {
   return (
-    <>
+    <QueryClientProvider client={queryClient}>
       <GlobalStyle />
       <Router />
-    </>
+    </QueryClientProvider>
   );
 }
 
