@@ -52,14 +52,13 @@ const RestaurantMap = () => {
 
       <MapContainer>
         <Map center={center} style={{ width: '100%', height: '100vh' }}>
-          {restaurants &&
-            restaurants.map((restaurant) => (
-              <MapMarker
-                key={restaurant.id}
-                position={{ lat: restaurant.latitude, lng: restaurant.longitude }}
-                title={restaurant.name}
-              />
-            ))}
+          {restaurants.map((restaurant) => (
+            <MapMarker
+              key={restaurant.id}
+              position={{ lat: restaurant.latitude, lng: restaurant.longitude }}
+              title={restaurant.name}
+            />
+          ))}
         </Map>
       </MapContainer>
     </Container>
