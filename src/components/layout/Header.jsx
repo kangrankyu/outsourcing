@@ -71,7 +71,7 @@ const Header = () => {
       <Logo>YEE조 팀 프로젝트</Logo>
       <NavLinks>
         <NavLink to="/">홈</NavLink>
-        <NavLink to="/board">게시판</NavLink>
+        <NavLink to="/community">게시판</NavLink>
 
         {user ? (
           <>

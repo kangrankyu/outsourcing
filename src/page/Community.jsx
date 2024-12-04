@@ -1,9 +1,9 @@
-import ScrollToTopButton from '../component/ScrollToTopButton'; // 스크롤 상단 버튼 컴포넌트 임포트
+import ScrollToTopButton from '../components/ScrollToTopButton'; // 스크롤 상단 버튼 컴포넌트 임포트
 import styled from 'styled-components'; // 스타일링을 위한 styled-components 임포트
 import { useEffect, useState } from 'react'; // React의 useEffect와 useState 훅 임포트
-import InfiniteScroll from '../component/InfiniteScroll'; // 무한 스크롤을 위한 컴포넌트 임포트
-import StarRating from '../component/StarRating'; // 별점 평가를 위한 컴포넌트 임포트
-import StarDisplay from '../component/StarDisplay';
+import InfiniteScroll from '../components/InfiniteScroll'; // 무한 스크롤을 위한 컴포넌트 임포트
+import StarRating from '../components/StarRating'; // 별점 평가를 위한 컴포넌트 임포트
+import StarDisplay from '../components/StarDisplay';
 import { useMutation } from '@tanstack/react-query';
 import { supabase } from '../supabase/supabaseClient';
 
@@ -82,7 +82,7 @@ const Card = styled.div`
 `;
 
 // 레스토랑 리스트 컴포넌트 정의
-function RestaurantsList() {
+function Community() {
   const [cards, setCards] = useState([]); // 카드 데이터를 위한 상태 변수
   const [content, setConTent] = useState(''); // 리뷰 내용을 위한 상태 변수
   const [rating, setRating] = useState(0); // 평점을 위한 상태 변수
@@ -204,4 +204,4 @@ function RestaurantsList() {
     </ListContainer>
   );
 }
-export default RestaurantsList; // 컴포넌트 내보내기
+export default Community; // 컴포넌트 내보내기
