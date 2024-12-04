@@ -16,7 +16,7 @@ const Navbar = styled.nav`
   justify-content: space-between;
   align-items: center;
   padding: 1rem 2rem;
-  box-sizing: border-box; // 잘림방지
+  box-sizing: border-box;
 `;
 
 const NavLinks = styled.div`
@@ -90,9 +90,6 @@ const Header = () => {
   );
 };
 
+
 export default Header;
 
-// <Link>는 <a>태그처럼 링크를 연결하지만 url과는 다른 path 개념
-// Link 컴포넌트 사용으로 이동하고자 하는 경로(url)로 이동할 수 있다.
-// 브라우저의 주소만 바꿀 뿐 페이지를 새로 불러오지 않는다.
-// 나 NavLink 잘 쓸줄몰라...

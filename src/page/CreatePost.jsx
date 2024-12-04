@@ -1,10 +1,11 @@
-import  { useEffect } from 'react';
+import { useEffect } from 'react';
 import { useState } from 'react';
 import { Wrapper, InputGroup, Button, FileUploadLabel, InputWrapper, BoxInputStyle, FileUploadContent, FormWrapper, ImgInputStyle, ReasonInputGroup, CenterWrapper } from '../styles/CreatePostStyle';
 import supabase from '../utils/supabaseClient';
 import { v4 as uuid } from 'uuid';
-// import PlaceSearch from '../components/PlaceSearch';
-
+import PlaceSearch from '../components/PlaceSearch';
+import Modal from '../components/SearchModal';
+import { useNavigate } from 'react-router-dom';
 
 const CreatePost = () => {
     const [name, setName] = useState('');
@@ -13,16 +14,22 @@ const CreatePost = () => {
     const [content, setContent] = useState('');
     const [imgFile, setImgFile] = useState(null);
     const [imgUrl, setImgUrl] = useState(null);
-    // const [latitude, setLatitude] = useState('');
-    // const [longitude, setLongitude] = useState('');
     const [userId, setUserId] = useState('');
     const [review, setReview] = useState([]);
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    // restaurants 에 들어갈 데이터 상태관리
+    const [restaurantName, setRestaurantName] = useState('');
+    const [latitude, setLatitude] = useState('');
+    const [longitude, setLongitude] = useState('');
+    const [restaurantAddress, setRestaurantAddress] = useState('');
+    const [phone, setPhone] = useState('');
+
+    const navigate = useNavigate();
 
     // 로그인한 사람 데이터 찾기
     useEffect(() => {
         const fetchData = async () => {
             const { data: userData, error: userError } = await supabase.auth.getUser();
-            console.log({ userData });
             if (userError) {
                 console.error("Error:", userError);
                 return;
@@ -52,6 +59,18 @@ const CreatePost = () => {
         e.preventDefault();
         const newFileName = uuid();
 
+        // 입력값이 빈 경우 alert을 띄우고 함수 종료
+        if (!name || !address || !rating || !content) {
+            alert("모든 필드를 채워주세요!");
+            return;
+        }
+
+        // 파일이 없을 경우 alert를 띄우고 함수 종료
+        if (!imgFile) {
+            alert("사진을 업로드해주세요!");
+            return;
+        }
+
         // supabase storage에 이미지 url 추가
         const { data: reviewImgData, error: reviewImgError } = await supabase.storage.from("reviewImg").upload(`reviewImg/${newFileName}`, imgFile);
         if (reviewImgError) {
@@ -62,16 +81,33 @@ const CreatePost = () => {
         // 이미지 url 가져오기
         const { data: urlData } = supabase.storage.from("reviewImg").getPublicUrl(reviewImgData.path);
 
+        // restaurants 에 데이터 넣기
+        const { data: restaurantData, error: restaurantError } = await supabase.from("restaurants").insert({
+            name: restaurantName,
+            latitude: latitude, // 위도
+            longitude: longitude, // 경도
+            address: restaurantAddress,
+            tel: phone,
+        }).select();
+        if (restaurantError) {
+            console.error("Error:", restaurantError);
+        } else {
+            console.log("Success:", restaurantData);
+        }
+
+        // 추가한 restaurants의 id 값 가지고오기
+        const restaurantId = restaurantData[0].id;
+
         // supabase에 추가
         const { data: postData, error: postError } = await supabase.from("reviews").insert({
-            name: name,
-            address: address,
+            name,
+            address: restaurantAddress,
             rating: parseInt(rating),
-            content: content,
+            content,
             user_id: userId,
             img_url: urlData.publicUrl,
-            // latitude: latitude,
-            // longitude: longitude,
+            // 가게의 ID 리뷰에 연결
+            restaurantsid: restaurantId,
         }).select();
         if (postError) {
             console.error("Error", postError);
@@ -82,12 +118,22 @@ const CreatePost = () => {
         setRating('');
         setContent('');
         setImgFile(null);
+
+        alert('게시글 작성이 완료되었습니다!')
+        navigate('/mypage');
     }
 
-    const removeBtn = () => {
+    const removeBtn = (e) => {
+        e.preventDefault();
         setImgUrl(null);
         setImgFile(null);
     }
+
+    // 모달에서 선택된 장소의 주소를 설정하는 함수
+    const handleAddressSelect = (selectedAddress) => {
+        setAddress(selectedAddress);
+        setIsModalOpen(false);
+    };
 
     return (
         <CenterWrapper>
@@ -104,7 +150,7 @@ const CreatePost = () => {
                                     onChange={handleFileChange}
                                 />
                                 {imgFile && (
-                                    <button type='button' onClick={removeBtn} className="remove-button">X</button>
+                                    <button type="button" onClick={removeBtn} className="remove-button">X</button>
                                 )}
                             </FileUploadLabel>
                             {!imgFile ? (<FileUploadContent>가게 사진 or 음식 사진을 올려주세요!</FileUploadContent>) : ("")}
@@ -116,8 +162,23 @@ const CreatePost = () => {
                             </InputGroup>
                             <InputGroup>
                                 <label>주소</label>
-                                <input type='text' value={address} placeholder='주소를 입력해주세요' onChange={(e) => setAddress(e.target.value)} required />
-                                {/* <PlaceSearch /> */}
+                                <input type='text'
+                                    value={address}
+                                    placeholder='주소를 검색해주세요'
+                                    readOnly
+                                    onClick={() => setIsModalOpen(true)}
+                                    required />
+                                {isModalOpen && (
+                                    <Modal onClose={() => setIsModalOpen(false)}>
+                                        <PlaceSearch
+                                            setRestaurantName={setRestaurantName}
+                                            setLatitude={setLatitude}
+                                            setLongitude={setLongitude}
+                                            setRestaurantAddress={setRestaurantAddress}
+                                            setPhone={setPhone}
+                                            onSelectAddress={handleAddressSelect} />
+                                    </Modal>
+                                )}
                             </InputGroup>
                             <InputGroup>
                                 <label>평점</label>
