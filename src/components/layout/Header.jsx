@@ -36,6 +36,9 @@ const NavLink = styled(Link)`
   font-weight: 600;
   font-size: 1rem;
   transition: color 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 
   &:hover {
     color: #2d3748;
@@ -53,7 +56,7 @@ const Header = () => {
     // 상태 초기화
     setUser(null);
     signOutUser();
-    
+
     // 로그아웃 알림
     alert('로그아웃 되었습니다.');
 
@@ -69,16 +72,19 @@ const Header = () => {
       <NavLinks>
         <NavLink to="/">홈</NavLink>
         <NavLink to="/board">게시판</NavLink>
-        <NavLink to="/mypage">마이 페이지</NavLink>
 
         {user ? (
-          <button onClick={handleLogout}>로그아웃</button>
+          <>
+            <NavLink to="/mypage">마이 페이지</NavLink>
+            <NavLink to="/createpost">게시글 작성</NavLink>
+            <button onClick={handleLogout}>로그아웃</button>
+          </>
         ) : (
           <>
             <button onClick={() => navigate('/login')}>로그인</button>
             <button onClick={() => navigate('/signup')}>회원가입</button>
           </>
-          )}
+        )}
         {/*         
         {user ? (
           <button onClick={handleLogout}>로그아웃</button>  // 유저가 있을 경우 로그아웃 버튼
