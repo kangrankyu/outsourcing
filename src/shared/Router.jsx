@@ -16,6 +16,7 @@ function Router() {
                 </Route>
                 <Route path="/login" element={<Login />} />
                 <Route path="/signup" element={<Signup />} />
+               
                 <Route path="/mypage" element={<MyPage />} />
                 <Route path="/restaurants/:id" element={<RestaurantsList />} />
                 <Route path="/createpost" element={<CreatePost />} />

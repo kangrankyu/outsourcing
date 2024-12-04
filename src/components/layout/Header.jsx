@@ -1,8 +1,11 @@
-import { Link } from 'react-router-dom';
+import { useContext } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
+import { UserContext } from '../UserProvider';
+import { signOutUser } from '../../auth/authapi';
 
 const Navbar = styled.nav`
-  background-color: #FFFFFF;
+  background-color: #ffffff;
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
   position: fixed;
   top: 0;
@@ -40,19 +43,48 @@ const NavLink = styled(Link)`
 `;
 
 const Header = () => {
+  const navigate = useNavigate();
+  const { user, setUser } = useContext(UserContext); // UserContext에서 user와 setUser 가져오기
+
+  const handleLogout = () => {
+    // 로컬 스토리지에서 유저와 토큰 정보 삭제
+    localStorage.removeItem('user');
+    localStorage.removeItem('token');
+    // 상태 초기화
+    setUser(null);
+    signOutUser();
+    
+    // 로그아웃 알림
+    alert('로그아웃 되었습니다.');
+
+    // 로그인 페이지로 이동
+    navigate('/login');
+  };
+
+
+
   return (
     <Navbar>
       <Logo>YEE조 팀 프로젝트</Logo>
       <NavLinks>
-        <NavLink to="/">
-          홈
-        </NavLink>
-        <NavLink to="/board">
-          게시판
-        </NavLink>
-        <NavLink to="/mypage">
-          마이 페이지
-        </NavLink>
+        <NavLink to="/">홈</NavLink>
+        <NavLink to="/board">게시판</NavLink>
+        <NavLink to="/mypage">마이 페이지</NavLink>
+
+        {user ? (
+          <button onClick={handleLogout}>로그아웃</button>
+        ) : (
+          <>
+            <button onClick={() => navigate('/login')}>로그인</button>
+            <button onClick={() => navigate('/signup')}>회원가입</button>
+          </>
+          )}
+        {/*         
+        {user ? (
+          <button onClick={handleLogout}>로그아웃</button>  // 유저가 있을 경우 로그아웃 버튼
+        ) : (
+          <button onClick={() => navigate("/login")}>로그인</button>  // 유저가 없으면 로그인 버튼
+        )} */}
       </NavLinks>
     </Navbar>
   );

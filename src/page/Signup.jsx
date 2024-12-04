@@ -2,7 +2,7 @@ import React from 'react'
 import AuthFrom from '../components/AuthFrom.JSX';
 import { signUpNewUser, tablenickname } from '../auth/authapi';
 import { useNavigate } from 'react-router-dom';
-import { LoginDiv2 } from './Login';
+
 
 
 const Signup = () => {
