@@ -11,6 +11,7 @@ const PageContainer = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
+  margin-top: 80px;
 `;
 
 const NicknameWrapper = styled.div`
@@ -204,7 +205,8 @@ const MyPage = () => {
         data: { user }
       } = await supabase.auth.getUser();
       const { data } = await supabase.from('users').select('nickname').eq('id', user.id).single();
-      return data?.nickname;
+      console.log({ data });
+      return data.nickname;
     }
   });
 

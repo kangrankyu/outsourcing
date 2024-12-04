@@ -11,10 +11,10 @@ function App() {
   return (
 
     <QueryClientProvider client={queryClient}>
-          <UserProvider >
-      <GlobalStyle />
+      <UserProvider >
+        <GlobalStyle />
         <Router />
-        </UserProvider>
+      </UserProvider>
     </QueryClientProvider>
   );
 }
