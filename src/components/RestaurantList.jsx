@@ -1,3 +1,5 @@
+// rename
+
 import { useState } from 'react';
 import useRestaurantsData from './useRestaurantsData';
 import styled from 'styled-components';
@@ -16,7 +18,7 @@ const SearchInput = styled.input`
   margin-bottom: 1rem;
   border: 1px solid #cccccc;
   border-radius: 5px;
-  font-size: 0.9rem; // 글꼴 크기 줄이기
+  font-size: 0.9rem;
   transition: box-shadow 0.3s ease;
 
   &:hover {
@@ -80,7 +82,7 @@ const RestaurantList = ({ onSelectRestaurant }) => {
   if (isLoading) return <div>Loading...</div>;
   if (error) return <div>Error: {error.message}</div>;
 
-  // 검색어를 기준으로 필터링하기 (null 체크 추가)
+  // 검색어를 기준으로 필터링하기
   const filteredRestaurants = restaurants.filter(
     (restaurant) =>
       restaurant.name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
