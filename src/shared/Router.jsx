@@ -9,20 +9,28 @@ import Layout from '../components/layout/Layout';
 
 function Router() {
 
+
+
+
   return (
     <BrowserRouter>
       <Routes>
         <Route element={<Layout />}>
           <Route path="/" element={<Home />} />
-          <Route path="/signup" element={<Signup />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/mypage" element={<MyPage />} />
-          <Route path="/restaurants/:id" element={<RestaurantsList />} />
-          <Route path="/createpost" element={<CreatePost />} />
+
         </Route>
+        <Route path="/login" element={<Login />} />
+        <Route path="/signup" element={<Signup />} />
+        <Route path="/mypage" element={<MyPage />} />
+        <Route path="/restaurants/:id" element={<RestaurantsList />} />
+        <Route path="/RestaurantsList" element={<RestaurantsList />} />
+        <Route path="/createpost" element={<CreatePost />} />
       </Routes>
     </BrowserRouter>
   );
+
+         
+
 
 }
 export default Router;
