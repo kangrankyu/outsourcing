@@ -1,122 +1,389 @@
-// 필요한 라이브러리와 모듈을 임포트합니다.
-import { useQuery } from '@tanstack/react-query'; // React Query를 사용하여 데이터를 가져옵니다.
-import styled from 'styled-components'; // styled-components를 사용하여 스타일을 정의합니다.
-import supabase from '../utils/supabaseClient'; // Supabase 클라이언트를 임포트하여 데이터베이스와의 상호작용을 합니다.
+import { useState } from 'react';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import styled from 'styled-components';
+import supabase from '../utils/supabaseClient';
 
-// Styled Components를 사용하여 페이지의 스타일을 정의합니다.
+// Styled Components
 const PageContainer = styled.div`
-  background-color: #f3f3f3; // 페이지 배경 색상 설정
-  padding: 20px; // 페이지 내부 여백 설정
-  min-height: 100vh; // 페이지의 최소 높이를 화면 전체로 설정
+  background-color: #f3f3f3;
+  padding: 20px;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 80px;
 `;
 
 const NicknameWrapper = styled.div`
-  margin-bottom: 20px; // 닉네임 래퍼 아래쪽 여백 설정
+  margin-bottom: 20px;
+  text-align: center;
+
   h2 {
-    font-size: 24px; // 닉네임 크기 설정
-    font-weight: bold; // 닉네임 두껍게 설정
+    font-size: 24px;
+    font-weight: bold;
   }
 `;
 
 const CardContainer = styled.div`
-  display: flex; // 카드 컨테이너를 플렉스 박스로 설정
-  flex-wrap: wrap; // 카드가 줄 바꿈되도록 설정
-  gap: 50px; // 카드 사이의 간격 설정
+  display: flex;
+  flex-wrap: wrap;
+  gap: 30px;
+  justify-content: start;
+  width: 100%;
+  max-width: 1200px;
 `;
 
 const Card = styled.div`
-  border: 1px solid #ccc; // 카드 테두리 설정
-  padding: 16px; // 카드 내부 여백 설정
-  width: 20%; // 카드 너비 설정
-  border-radius: 8px; // 카드 모서리 둥글게 설정
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); // 카드 그림자 설정
-  transition: // 카드의 트랜지션 효과 설정
+  border: 1px solid #ccc;
+  padding: 16px;
+  width: calc(25% - 30px);
+  height: 400px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  transition:
     transform 0.2s ease,
     box-shadow 0.2s ease;
-  &:hover { // 카드에 마우스를 올렸을 때의 효과
-    transform: translateY(-5px); // 카드 위로 이동
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); // 그림자 효과 변경
+
+  &:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
   }
+
   img {
-    width: 100%; // 이미지 너비 100%로 설정
-    height: 150px; // 이미지 높이 고정
-    object-fit: cover; // 이미지 비율 유지하며 잘리도록 설정
-    border-radius: 4px; // 이미지 모서리 둥글게 설정
-    margin-bottom: 12px; // 이미지 아래쪽 여백 설정
+    width: 100%;
+    height: 180px;
+    object-fit: cover;
+    border-radius: 4px;
+    margin-bottom: 12px;
   }
-  .placeholder { // 이미지가 없을 때 표시할 플레이스홀더 스타일
-    width: 100%; // 너비 100%로 설정
-    height: 150px; // 높이 고정
-    background-color: #ddd; // 배경색 설정
-    border-radius: 4px; // 모서리 둥글게 설정
-    margin-bottom: 12px; // 아래쪽 여백 설정
+
+  .placeholder {
+    width: 100%;
+    height: 180px;
+    background-color: #ddd;
+    border-radius: 4px;
+    margin-bottom: 12px;
   }
+
   h3 {
-    font-size: 16px; // 상호명 크기 설정
-    font-weight: bold; // 상호명 두껍게 설정
-    margin-bottom: 8px; // 아래쪽 여백 설정
+    font-size: 16px;
+    font-weight: bold;
+    margin-bottom: 8px;
   }
+
   p {
-    margin: 4px 0; // 상하 여백 설정
-    font-size: 12px; // 텍스트 크기 설정
-    color: #555; // 텍스트 색상 설정
+    margin: 4px 0;
+    font-size: 12px;
+    color: #555;
   }
 `;
 
-// MyPage 컴포넌트 정의
+const ModalOverlay = styled.div`
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 10;
+`;
+
+const ModalContent = styled.div`
+  background: white;
+  padding: 20px;
+  border-radius: 8px;
+  width: 40%;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+
+  img {
+    width: 100%;
+    height: 300px;
+    object-fit: cover;
+    border-radius: 4px;
+    margin-bottom: 20px;
+  }
+
+  .placeholder {
+    width: 100%;
+    height: 300px;
+    background-color: #ddd;
+    border-radius: 4px;
+    margin-bottom: 20px;
+  }
+
+  h3 {
+    font-size: 20px;
+    font-weight: bold;
+    margin-bottom: 12px;
+  }
+
+  p {
+    margin: 8px 0;
+    font-size: 14px;
+    color: #555;
+  }
+
+  button {
+    margin-top: 20px;
+    padding: 10px 20px;
+    border-radius: 8px;
+    cursor: pointer;
+  }
+
+  .button-group {
+    display: flex;
+    justify-content: space-between;
+  }
+`;
+
+const Label = styled.label`
+  display: flex;
+  align-items: center;
+  margin-bottom: 16px;
+
+  span {
+    width: 100px;
+    font-weight: bold;
+    margin-right: 16px;
+  }
+`;
+
+const StyledInput = styled.input`
+  flex: 1;
+  border: none;
+  border-bottom: 1px solid #ccc;
+  font-size: 16px;
+  padding: 4px 0;
+  outline: none;
+
+  &:focus {
+    border-bottom: 2px solid #3949ab;
+  }
+`;
+
+const StyledTextarea = styled.textarea`
+  flex: 1;
+  height: 100px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 14px;
+  padding: 8px;
+  outline: none;
+
+  &:focus {
+    border: 1px solid #3949ab;
+  }
+`;
+
+const SelectInput = styled.select`
+  flex: 1;
+  padding: 8px;
+  font-size: 14px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+
+  &:focus {
+    border: 1px solid #3949ab;
+  }
+`;
+
 const MyPage = () => {
-  // 닉네임을 가져오는 쿼리
+  const [selectedReview, setSelectedReview] = useState(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
+  const [editedReview, setEditedReview] = useState(null);
+
+  const queryClient = useQueryClient();
+
   const { data: nickname, isLoading: isNicknameLoading } = useQuery({
-    queryKey: ['nickname'], // 쿼리 키 설정
-    queryFn: async () => { // 비동기 함수 정의
-      const { data: { user } } = await supabase.auth.getUser(); // 현재 사용자 정보 가져오기
-      const { data } = await supabase.from('users').select('nickname').eq('id', user.id).single(); // 사용자 닉네임 가져오기
-      return data?.nickname; // 닉네임 반환
+    queryKey: ['nickname'],
+    queryFn: async () => {
+      const {
+        data: { user }
+      } = await supabase.auth.getUser();
+      const { data } = await supabase.from('users').select('nickname').eq('id', user.id).single();
+      console.log({ data });
+      return data.nickname;
     }
   });
 
-  // 리뷰를 가져오는 쿼리
   const { data: reviews, isLoading: isReviewsLoading } = useQuery({
-    queryKey: ['reviews'], // 쿼리 키 설정
-    queryFn: async () => { // 비동기 함수 정의
-      const { data: { user } } = await supabase.auth.getUser(); // 현재 사용자 정보 가져오기
+    queryKey: ['reviews'],
+    queryFn: async () => {
+      const {
+        data: { user }
+      } = await supabase.auth.getUser();
       const { data } = await supabase
         .from('reviews')
-        .select('id, content, rating, name, address, img_url') // 필요한 필드 선택
-        .eq('user_id', user.id); // 현재 사용자 ID로 필터링
-      return data || []; // 리뷰 데이터 반환, 없으면 빈 배열 반환
+        .select('id, content, rating, name, address, img_url')
+        .eq('user_id', user.id);
+      return data || [];
     }
   });
 
-  // 데이터 로딩 중일 때 로딩 메시지 표시
+  const updateMutation = useMutation({
+    mutationFn: async (updatedReview) => {
+      const { error } = await supabase
+        .from('reviews')
+        .update({
+          content: updatedReview.content,
+          rating: updatedReview.rating,
+          name: updatedReview.name,
+          address: updatedReview.address
+        })
+        .eq('id', updatedReview.id);
+      if (error) throw new Error(error.message);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries(['reviews']);
+      alert('리뷰가 수정되었습니다.');
+      closeModal();
+    }
+  });
+
+  const deleteMutation = useMutation({
+    mutationFn: async (reviewId) => {
+      const { error } = await supabase.from('reviews').delete().eq('id', reviewId);
+      if (error) throw new Error(error.message);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries(['reviews']);
+      alert('리뷰가 삭제되었습니다.');
+      closeModal();
+    }
+  });
+
+  const openModal = (review) => {
+    setSelectedReview(review);
+    setEditedReview({ ...review });
+    setIsModalOpen(true);
+    setIsEditing(false);
+  };
+
+  const closeModal = () => {
+    setSelectedReview(null);
+    setEditedReview(null);
+    setIsModalOpen(false);
+    setIsEditing(false);
+  };
+
+  const handleEditToggle = () => {
+    setIsEditing(!isEditing);
+  };
+
+  const handleSave = () => {
+    if (editedReview) {
+      updateMutation.mutate(editedReview);
+    }
+  };
+
   if (isNicknameLoading || isReviewsLoading) {
     return <PageContainer>Loading...</PageContainer>;
   }
 
-  // 데이터 로딩이 끝나면 페이지 내용 반환
   return (
     <PageContainer>
       <NicknameWrapper>
-        <h2>{nickname}님</h2> {/* 사용자 닉네임 표시 */}
+        <h2>{nickname}님</h2>
       </NicknameWrapper>
+
       <CardContainer>
-        {reviews.map((review) => ( // 리뷰 데이터를 맵으로 돌려 카드 생성
-          <Card key={review.id}>
-            {review.img_url ? ( // 이미지 URL이 있을 경우
+        {reviews.map((review) => (
+          <Card key={review.id} onClick={() => openModal(review)}>
+            {review.img_url ? (
               <img src={review.img_url} alt={`${review.name} 이미지`} />
-            ) : ( // 이미지 URL이 없을 경우 플레이스홀더 표시
+            ) : (
               <div className="placeholder" />
             )}
-            <h3>상호명 : {review.name}</h3> {/* 상호명 표시 */}
-            <p>주소 : {review.address}</p> {/* 주소 표시 */}
-            <p>평점: {review.rating}</p> {/* 평점 표시 */}
-            <p>리뷰: {review.content}</p> {/* 리뷰 내용 표시 */}
+            <h3>상호명 : {review.name}</h3>
+            <p>주소 : {review.address}</p>
+            <p>평점: {review.rating}</p>
+            <p>리뷰: {review.content.length > 30 ? `${review.content.substring(0, 30)}...` : review.content}</p>
           </Card>
         ))}
       </CardContainer>
+
+      {isModalOpen && selectedReview && (
+        <ModalOverlay onClick={closeModal}>
+          <ModalContent onClick={(e) => e.stopPropagation()}>
+            {selectedReview.img_url ? (
+              <img src={selectedReview.img_url} alt={`${selectedReview.name} 이미지`} />
+            ) : (
+              <div className="placeholder" />
+            )}
+            {isEditing ? (
+              <>
+                <Label>
+                  <span>상호명:</span>
+                  <StyledInput
+                    value={editedReview.name}
+                    onChange={(e) => setEditedReview({ ...editedReview, name: e.target.value })}
+                  />
+                </Label>
+                <Label>
+                  <span>주소:</span>
+                  <StyledInput
+                    value={editedReview.address}
+                    onChange={(e) => setEditedReview({ ...editedReview, address: e.target.value })}
+                  />
+                </Label>
+                <Label>
+                  <span>평점:</span>
+                  <SelectInput
+                    value={editedReview.rating}
+                    onChange={(e) => setEditedReview({ ...editedReview, rating: e.target.value })}
+                  >
+                    <option value="" disabled>
+                      평점 선택
+                    </option>
+                    {[1, 2, 3, 4, 5].map((rating) => (
+                      <option key={rating} value={rating}>
+                        {rating}
+                      </option>
+                    ))}
+                  </SelectInput>
+                </Label>
+                <Label>
+                  <span>리뷰:</span>
+                  <StyledTextarea
+                    value={editedReview.content}
+                    onChange={(e) => setEditedReview({ ...editedReview, content: e.target.value })}
+                  />
+                </Label>
+              </>
+            ) : (
+              <>
+                <h3>상호명 : {selectedReview.name}</h3>
+                <p>주소 : {selectedReview.address}</p>
+                <p>평점: {selectedReview.rating}</p>
+                <p>리뷰: {selectedReview.content}</p>
+              </>
+            )}
+            <div className="button-group">
+              <button style={{ backgroundColor: '#f3f3f3', color: 'black' }} onClick={handleEditToggle}>
+                {isEditing ? '취소' : '수정'}
+              </button>
+              {isEditing ? (
+                <button style={{ backgroundColor: '#3949ab', color: 'white' }} onClick={handleSave}>
+                  저장
+                </button>
+              ) : (
+                <button
+                  style={{ backgroundColor: '#3949ab', color: 'white' }}
+                  onClick={() => deleteMutation.mutate(selectedReview.id)}
+                >
+                  삭제
+                </button>
+              )}
+            </div>
+          </ModalContent>
+        </ModalOverlay>
+      )}
     </PageContainer>
   );
 };
 
-// MyPage 컴포넌트를 기본 내보내기
 export default MyPage;

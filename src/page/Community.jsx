@@ -1,8 +1,8 @@
-import ScrollToTopButton from '../components/ScrollToTopButton';
-import styled from 'styled-components';
-import { useEffect, useState } from 'react';
-import InfiniteScroll from '../components/InfiniteScroll';
-import StarRating from '../components/StarRating';
+import ScrollToTopButton from '../components/ScrollToTopButton'; // 스크롤 상단 버튼 컴포넌트 임포트
+import styled from 'styled-components'; // 스타일링을 위한 styled-components 임포트
+import { useEffect, useState } from 'react'; // React의 useEffect와 useState 훅 임포트
+import InfiniteScroll from '../components/InfiniteScroll'; // 무한 스크롤을 위한 컴포넌트 임포트
+import StarRating from '../components/StarRating'; // 별점 평가를 위한 컴포넌트 임포트
 import StarDisplay from '../components/StarDisplay';
 import { useMutation } from '@tanstack/react-query';
 import { supabase } from '../supabase/supabaseClient';
