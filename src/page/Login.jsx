@@ -50,7 +50,7 @@ export const LoginDiv2 = styled.div`
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
-  margin-top: 50px;
+  margin-top: 100px;
 `;
 const LoginDiv = styled.div`
   display: flex;
