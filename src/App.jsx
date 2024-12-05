@@ -1,11 +1,22 @@
-import { useState } from 'react'
-import supabase from './utils/supabaseClient'
-import Router from './shared/Router'
-console.log(supabase)
-function App() {
-  const [count, setCount] = useState(0)
 
-  return (<Router />)
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+// import supabase from './utils/supabaseClient';
+import { UserProvider } from './components/UserProvider';
+import Router from './shared/Router';
+import GlobalStyle from './styles/GlobalStyle';
+
+const queryClient = new QueryClient();
+
+function App() {
+  return (
+
+    <QueryClientProvider client={queryClient}>
+      <UserProvider >
+        <GlobalStyle />
+        <Router />
+      </UserProvider>
+    </QueryClientProvider>
+  );
 }
 
-export default App
+export default App;
