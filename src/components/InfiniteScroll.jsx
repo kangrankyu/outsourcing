@@ -41,7 +41,7 @@ const Card = styled.div`
   border: 1px solid #ccc;
   padding: 16px;
   width: calc(25% - 30px);
-  height: 450px;
+  height: 600px;
   border-radius: 8px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   transition:
@@ -76,6 +76,26 @@ const Card = styled.div`
     color: #555;
   }
 `;
+const CommentsList = styled.div`
+  margin-top: 10px;
+  padding: 10px;
+  background-color: #f9f9f9;
+  border-radius: 5px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+`;
+
+const Comment = styled.div`
+  background-color: #f1f1f1;
+  padding: 8px;
+  margin: 5px 0;
+  border-radius: 4px;
+  font-size: 14px;
+  color: #333;
+  transition: background-color 0.3s ease;
+  &:hover {
+    background-color: #e1e1e1;
+  }
+`;
 
 // 게시물을 가져오는 비동기 함수
 const fetchPosts = async ({ pageParam = 0 }) => {
@@ -95,19 +115,83 @@ const InfiniteScroll = () => {
   const [content, setConTent] = useState('');
   const [rating, setRating] = useState(0);
   const [editCardId, setEditCardId] = useState();
+  const [comments, setComments] = useState([]);
+  const [editCommentId, setEditCommentId] = useState(null); // 수정할 댓글 ID
+  const [editCommentContent, setEditCommentContent] = useState(''); // 수정할 댓글 내용
+
+  // 댓글 수정 핸들러
+  const handleEditComment = async ({ event, commentId }) => {
+    event.preventDefault(); // 기본 폼 제출 동작 방지
+    const { data, error } = await supabase
+      .from('reviews')
+      .update({ content: editCommentContent }) // 수정된 내용을 업데이트
+      .match({ id: commentId }) // 수정할 댓글 ID로 필터링
+      .select('*'); // 수정된 데이터를 선택
+
+    if (error) {
+      return alert(error.message); // 에러 발생 시 알림
+    }
+
+    // 댓글 목록 업데이트
+    setComments(
+      comments.map((comment) => (comment.id === commentId ? { ...comment, content: editCommentContent } : comment))
+    );
+    setEditCommentId(null); // 수정 모드 종료
+    setEditCommentContent(''); // 입력 내용 초기화
+    alert('댓글이 수정되었습니다!'); // 수정 완료 알림
+  };
+
+  // 댓글 수정 버튼 클릭 핸들러
+  const handleEditCommentButtonClick = (comment) => {
+    setEditCommentId(comment.id); // 수정할 댓글 ID 상태 업데이트
+    setEditCommentContent(comment.content); // 댓글 내용 상태 업데이트
+  };
 
   useEffect(() => {
+    // 레스토랑 데이터를 가져오는 비동기 함수
     const fetchRestaurants = async () => {
-      const { data, error } = await supabase.from('restaurants').select('*').limit(20); // 초기값 20개만 가져오기
-
+      const { data, error } = await supabase.from('restaurants').select('*').limit(20);
       if (error) {
-        return alert(error.message); // 에러 발생 시 경고창 표시
+        return alert(error.message); // 에러 발생 시 알림
       }
-      setCards(data); // 가져온 데이터로 카드 상태 업데이트
-      console.log(data); // 콘솔에 데이터 출력
+      setCards(data); // 가져온 데이터를 상태에 저장
     };
-    fetchRestaurants(); // 함수 호출
-  }, []);
+
+    // 댓글 데이터를 가져오는 비동기 함수
+    const fetchComments = async () => {
+      const { data, error } = await supabase.from('reviews').select('*');
+      if (error) {
+        return alert(error.message); // 에러 발생 시 알림
+      }
+      setComments(data); // 가져온 댓글 데이터를 상태에 저장
+    };
+
+    fetchRestaurants(); // 레스토랑 데이터 가져오기 호출
+    fetchComments(); // 댓글 데이터 가져오기 호출
+  }, []); // 빈 배열을 전달하여 컴포넌트가 처음 마운트될 때만 실행
+
+  useEffect(() => {
+    // 레스토랑 데이터를 가져오는 비동기 함수
+    const fetchRestaurants = async () => {
+      const { data, error } = await supabase.from('restaurants').select('*').limit(20);
+      if (error) {
+        return alert(error.message); // 에러 발생 시 알림
+      }
+      setCards(data); // 가져온 데이터를 상태에 저장
+    };
+
+    // 댓글 데이터를 가져오는 비동기 함수
+    const fetchComments = async () => {
+      const { data, error } = await supabase.from('reviews').select('*');
+      if (error) {
+        return alert(error.message); // 에러 발생 시 알림
+      }
+      setComments(data); // 가져온 댓글 데이터를 상태에 저장
+    };
+
+    fetchRestaurants(); // 레스토랑 데이터 가져오기 호출
+    fetchComments(); // 댓글 데이터 가져오기 호출
+  }, []); // 빈 배열을 전달하
 
   const handleFeebackSubmit = async ({ event, restaurantId }) => {
     // onSubmit의 기본 동작인 새로고침 방지
@@ -148,6 +232,8 @@ const InfiniteScroll = () => {
     queryFn: fetchPosts,
     getNextPageParam: (lastPage, allPages) => {
       // 다음 페이지의 파라미터 계산
+      console.log(lastPage);
+      console.log(allPages);
       return lastPage.length ? allPages.length * 6 : undefined; // 다음 페이지의 시작 인덱스
     }
   });
@@ -183,33 +269,63 @@ const InfiniteScroll = () => {
     }
   };
 
-  // 데이터가 로딩되었을 때의 UI 구성
   return (
     <ListContainer>
       <RestaurantsWrapper>
         <CardContainer>
           {data.pages.flat().map((card) =>
-            card.id !== editCardId ? (
+            card.id !== editCardId ? ( // 현재 수정 중인 카드가 아니면
               <Card key={card.id}>
                 {card.img_url ? (
-                  <img src={card.img_url} alt={`${card.name} 이미지`} />
+                  <img src={card.img_url} alt={`${card.name} 이미지`} /> // 카드 이미지
                 ) : (
-                  <div className="placeholder" />
+                  <div className="placeholder" /> // 이미지가 없을 경우 플레이스홀더
                 )}
                 상호명: {card.name}
+                <br />
                 주소: {card.address}
                 <StarDisplay value={card.rating} />
-                리뷰: {card.review}
+                <CommentsList className="comments-list">
+                  {comments.length > 0 ? (
+                    comments
+                      .filter((comment) => comment.restaurantsid === card.id) // 해당 레스토랑의 댓글 필터링
+                      .map((comment) => (
+                        <Comment key={comment.id} className="comment">
+                          {editCommentId === comment.id ? ( // 수정 모드일 때
+                            <form onSubmit={(e) => handleEditComment({ event: e, commentId: comment.id })}>
+                              <input
+                                type="text"
+                                value={editCommentContent}
+                                onChange={(e) => setEditCommentContent(e.target.value)} // 입력 내용 상태 업데이트
+                                placeholder="댓글 수정하기"
+                              />
+                              <button type="submit">수정완료</button>
+                            </form>
+                          ) : (
+                            <>
+                              {comment.content}
+                              <button type="button" onClick={() => handleEditCommentButtonClick(comment)}>
+                                수정하기
+                              </button>
+                            </>
+                          )}
+                        </Comment>
+                      ))
+                  ) : (
+                    <p>댓글이 없습니다.</p> // 댓글이 없을 경우 메시지
+                  )}
+                </CommentsList>
+                <form onSubmit={(e) => handleFeebackSubmit({ event: e, restaurantId: card.id })}></form>
                 <button type="button" onClick={() => handleClickEditButton(card.id)}>
-                  수정하기
+                  제출하기
                 </button>
               </Card>
             ) : (
               <Card key={card.id}>
                 {card.img_url ? (
-                  <img src={card.img_url} alt={`${card.name} 이미지`} />
+                  <img src={card.img_url} alt={`${card.name} 이미지`} /> // 카드 이미지
                 ) : (
-                  <div className="placeholder" />
+                  <div className="placeholder" /> // 이미지가 없을 경우 플레이스홀더
                 )}
                 <form
                   onSubmit={(e) =>
@@ -220,13 +336,9 @@ const InfiniteScroll = () => {
                   }
                 >
                   <StarRating setRating={setRating} value={rating} />
-                  <input
-                    type="text"
-                    value={content} // 카드 내용 상태값
-                    onChange={handleContentChange} // 내용 변경 핸들러
-                    placeholder="상세리뷰 입력하기" // 입력란에 표시될 텍스트
-                  />
-                  <button type="submit">수정완료</button>
+                  <input type="text" value={content} onChange={handleContentChange} placeholder="상세리뷰 입력하기" />
+
+                  <button type="submit">제출완료</button>
                 </form>
               </Card>
             )
