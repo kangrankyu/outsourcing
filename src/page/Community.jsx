@@ -16,6 +16,7 @@ const ListContainer = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
+  margin-top: 80px;
 `;
 
 // 닉네임 래퍼 스타일 정의

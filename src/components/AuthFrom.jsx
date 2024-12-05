@@ -62,16 +62,12 @@ const AuthFrom = ({ mode, onSubmit }) => {
 export default AuthFrom;
 
 const LoginForm = styled.form`
-  display: flex
-;
+    display: flex;
     flex-direction: column;
     gap: 10px;
-    width: 100%;
-    max-width: 600px;
-   
+    width: 500px;
     border-radius: 15px;
     padding: 50px 30px;
-  
 `
 const LoginInput = styled.input`
     height: 60px;
