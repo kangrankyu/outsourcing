@@ -15,6 +15,7 @@ const ListContainer = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
+  margin-top: 80px;
 `;
 
 // 닉네임 래퍼 스타일 정의
@@ -114,6 +115,7 @@ function Community() {
         restaurantsid: restaurantId
       })
       .select('*');
+    console.log({ data });
 
     if (error) {
       return alert(error.message); // 에러 발생 시 경고창 표시
@@ -162,7 +164,7 @@ function Community() {
                 ) : (
                   <div className="placeholder" />
                 )}
-                상호명: {card.name}
+                상호명: {card.name}<br/>
                 주소: {card.address}
                 <StarDisplay value={card.rating} />
                 리뷰: {card.review}

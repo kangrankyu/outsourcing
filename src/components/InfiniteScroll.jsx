@@ -144,7 +144,7 @@ const InfiniteScroll = () => {
 
   // useInfiniteQuery 훅을 사용하여 데이터를 가져오고 상태를 관리
   const { data, fetchNextPage, hasNextPage, isLoading, isError } = useInfiniteQuery({
-    queryKey: ['restaurants'],
+    queryKey: ['list'],
     queryFn: fetchPosts,
     getNextPageParam: (lastPage, allPages) => {
       // 다음 페이지의 파라미터 계산
