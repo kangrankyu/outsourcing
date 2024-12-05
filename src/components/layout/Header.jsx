@@ -54,9 +54,9 @@ const Header = () => {
     localStorage.removeItem('user');
     localStorage.removeItem('token');
     // 상태 초기화
-    setUser(null);
+    
     signOutUser();
-
+    setUser(null);
     // 로그아웃 알림
     alert('로그아웃 되었습니다.');
 
