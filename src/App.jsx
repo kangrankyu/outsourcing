@@ -1,4 +1,3 @@
-
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 // import supabase from './utils/supabaseClient';
 import { UserProvider } from './components/UserProvider';
@@ -9,9 +8,8 @@ const queryClient = new QueryClient();
 
 function App() {
   return (
-
     <QueryClientProvider client={queryClient}>
-      <UserProvider >
+      <UserProvider>
         <GlobalStyle />
         <Router />
       </UserProvider>
